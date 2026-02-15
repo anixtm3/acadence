@@ -3,8 +3,6 @@
 ## Vision
 Academic Focused OS is an intelligent student-centric operating environment designed to enhance academic performance, maintain student well-being, and eliminate distractions.
 
----
-
 # 1. Core Objectives
 
 - Improve academic performance
@@ -12,8 +10,6 @@ Academic Focused OS is an intelligent student-centric operating environment desi
 - Ensure deadline discipline
 - Provide a privacy-first AI learning assistant
 - Create a distraction-free study environment
-
----
 
 # 2. System Architecture Overview
 
@@ -26,17 +22,15 @@ Academic Focused OS consists of the following major systems:
 5. Productivity & Deadline Engine
 6. Privacy & Security Framework
 
----
+## AI Engine (Local, Privacy-First)
 
-# 3. AI Engine (Local, Privacy-First)
-
-## Features:
+### Features:
 - Fully offline local AI
 - Encrypted personal data storage
 - Adaptive learning memory
 - Context-aware assistance
 
-## Capabilities:
+### Capabilities:
 - Summarization
 - Quiz generation
 - Flashcard generation
@@ -45,102 +39,86 @@ Academic Focused OS consists of the following major systems:
 - Performance tracking
 - Weakness detection
 
----
+## Academic Intelligence Module
 
-# 4. Academic Intelligence Module
-
-## Note Processing
+### Note Processing
 - PDF ingestion
 - OCR support
 - Topic segmentation
 - Concept extraction
 
-## Assessment Tools
+### Assessment Tools
 - MCQs
 - Subjective questions
 - Practice exams
 - Timed mock tests
 
-## Learning Optimization
+### Learning Optimization
 - Spaced repetition scheduling
 - Adaptive revision planning
 - Topic prioritization based on exam weightage
 
----
+## Well-Being Monitoring System
 
-# 5. Well-Being Monitoring System
-
-## Biometric Monitoring
+### Biometric Monitoring
 - Heart rate tracking
 - Stress detection
 - Sleep monitoring
 - Sedentary alerts
 
-## Smart Intervention
+### Smart Intervention
 - Guided breathing sessions
 - Break suggestions
 - Workload adjustment
 - Burnout prevention alerts
 
----
+## Focus & Environment Control
 
-# 6. Focus & Environment Control
-
-## Lock Mode
+### Lock Mode
 - App whitelisting
 - Website blocking
 - File access restriction
 - Time-bound session locking
 
-## Goal-Based Unlock
+### Goal-Based Unlock
 - Timer completion
 - Quiz completion
 - Chapter completion
 - Stress stabilization
 
----
+## Productivity & Deadline Engine
 
-# 7. Productivity & Deadline Engine
-
-## Smart Scheduling
+### Smart Scheduling
 - Academic calendar ingestion
 - Deadline tracking
 - Dynamic timetable generation
 
-## Risk Prediction
+### Risk Prediction
 - Deadline miss prediction
 - Automatic re-prioritization
 - Performance-based workload adjustment
 
----
-
-# 8. Privacy & Security
+## Privacy & Security
 
 - Fully offline processing
 - Encrypted local database
 - No third-party data sharing
 - Sandboxed AI execution
 
----
-
-# 9. Future Modules
+# Future Modules
 
 - Gamification system
 - Institutional dashboard
 - Peer collaboration system
 - Competitive exam optimization packs
 
----
-
-# 10. Target Audience
+# Target Audience
 
 - University students
 - Competitive exam aspirants
 - Research scholars
 - Institutions
 
----
-
-# 11. Long-Term Vision
+# Long-Term Vision
 
 To become the default intelligent academic operating environment for students worldwide.
