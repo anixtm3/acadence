@@ -1,4 +1,4 @@
-# Acadence
+# Acadence (v0.1)
 
 A state-aware productivity mode engine for GNOME.
 
