@@ -8,9 +8,7 @@ profile isolation.
 
 Built and tested on **Ubuntu GNOME 46**.
 
-------------------------------------------------------------------------
-
-## ✨ Features
+## Features
 
 -   🔴 Focus Mode (strict enforcement)
 -   📚 Study Mode
@@ -25,9 +23,7 @@ Built and tested on **Ubuntu GNOME 46**.
 -   Notification suppression during active modes
 -   Clean mode switching (no stacking, no stale state)
 
-------------------------------------------------------------------------
-
-## 🧠 How It Works
+## How It Works
 
 Acadence uses:
 
@@ -43,9 +39,7 @@ The top-bar indicator is powered by:
 If the file exists → mode name appears\
 If removed → indicator disappears
 
-------------------------------------------------------------------------
-
-## 📦 Project Structure
+## Project Structure
 
     acadence/
     ├── launcher.sh
@@ -56,20 +50,16 @@ If removed → indicator disappears
         ├── code.sh
         └── exit.sh
 
-------------------------------------------------------------------------
-
-## ⚙ Requirements
+## Requirements
 
 -   Ubuntu / GNOME 46
 -   Brave browser
 -   GNOME Shell Extension: Executor
 -   Git (optional)
 
-------------------------------------------------------------------------
+## Setup
 
-## 🔧 Setup
-
-### 1️⃣ Install Executor Extension
+### Step1: Install Executor Extension
 
 Install from GNOME Extension Manager and create one command:
 
@@ -81,23 +71,17 @@ Interval: 1
 
 Position: Left (recommended)
 
-------------------------------------------------------------------------
-
-### 2️⃣ Make Scripts Executable
+### Step 2: Make Scripts Executable
 
     chmod +x modes/*.sh
 
-------------------------------------------------------------------------
-
-### 3️⃣ Launch Modes
+### Step 3: Launch Modes
 
 Example:
 
     ./modes/focus.sh
 
-------------------------------------------------------------------------
-
-## 🚀 Future Improvements
+## Future Improvements
 
 -   Workspace auto-switching
 -   Timer-based sessions
@@ -105,8 +89,6 @@ Example:
 -   Passphrase unlock
 -   Installation automation
 
-------------------------------------------------------------------------
-
-## 📜 License
+## License
 
 MIT
