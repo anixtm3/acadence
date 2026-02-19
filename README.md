@@ -65,7 +65,7 @@ Install from GNOME Extension Manager and create one command:
 
 Name: Acadence Mode
 
-Command: cat /tmp/acadence_mode
+Command: `cat /tmp/acadence_mode`
 
 Interval: 1
 
