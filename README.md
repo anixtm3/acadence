@@ -40,7 +40,7 @@ If the file exists → mode name appears\
 If removed → indicator disappears
 
 ## Project Structure
-
+```
     acadence/
     ├── launcher.sh
     ├── install.sh
@@ -49,6 +49,7 @@ If removed → indicator disappears
         ├── study.sh
         ├── code.sh
         └── exit.sh
+```
 
 ## Requirements
 
@@ -72,14 +73,16 @@ Interval: 1
 Position: Left (recommended)
 
 ### Step 2: Make Scripts Executable
-
+```
     chmod +x modes/*.sh
+```
 
 ### Step 3: Launch Modes
 
 Example:
-
+```
     ./modes/focus.sh
+```
 
 ## Future Improvements
 
