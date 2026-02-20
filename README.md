@@ -8,7 +8,7 @@ keyboard switching.
 
 Built and tested on **Ubuntu GNOME 46**.
 
-## ✨ Features
+## Features
 
 -   🔴 Focus Mode (strict enforcement)
 -   📚 Study Mode
@@ -19,11 +19,11 @@ Built and tested on **Ubuntu GNOME 46**.
 -   🛡 Active distraction suppression (watchdog)
 -   🔄 Clean mode switching (no stacking / no ghost states)
 
-## 🧠 How It Works
+## How It Works
 
 Acadence is built on three core components:
 
-### 1️⃣ Watchdog Enforcement
+### Watchdog Enforcement
 
 Each mode starts a background watchdog that:
 
@@ -33,7 +33,7 @@ Each mode starts a background watchdog that:
 
 The watchdog is safely terminated before any new mode starts.
 
-### 2️⃣ Live Top-Bar Indicator (Executor)
+### Live Top-Bar Indicator (Executor)
 
 Acadence uses the GNOME **Executor** extension with this command:
 ```
@@ -50,7 +50,7 @@ Behavior:
 This avoids fragile dconf manipulation and ensures stable state
 switching.
 
-### 3️⃣ Keyboard Shortcuts
+### Keyboard Shortcuts
 
 Default shortcuts:
 
@@ -60,9 +60,10 @@ Default shortcuts:
 | **Shift + Alt + S** | 📚 Study |
 | **Shift + Alt + C** | 💻 Code  |
 | **Shift + Alt + E** | 🔓 Exit  |
+
 Shortcuts run the corresponding scripts directly.
 
-## 📦 Project Structure
+## Project Structure
 ```
 acadence/
 ├── launcher.sh
@@ -74,7 +75,7 @@ acadence/
     └── exit.sh
 ```
 
-## ⚙ Requirements
+## Requirements
 
 -   Ubuntu / GNOME 46
 -   Brave browser
@@ -86,9 +87,9 @@ Install notifications support if needed:
 sudo apt install libnotify-bin
 ```
 
-## 🔧 Setup
+## Setup
 
-### 1️⃣ Install Executor Extension
+### Step 1: Install Executor Extension
 
 Install via GNOME Extension Manager.
 
@@ -102,7 +103,7 @@ Interval: `1`
 
 Position: `Left` (recommended)
 
-### 2️⃣ Run Installer
+### Step 2: Run Installer
 ```
 chmod +x install.sh
 ./install.sh
@@ -113,7 +114,7 @@ This will:
 -   Create desktop launchers
 -   Guide Executor setup
 
-### 3️⃣ Optional: Add Keyboard Shortcuts
+### Step 3: Optional: Add Keyboard Shortcuts
 
 In GNOME:
 
@@ -126,7 +127,7 @@ Use absolute paths like:
 
 Do not use `~`.
 
-## 🔴 Focus Mode
+## Focus Mode
 
 -   Disables notifications
 -   Launches Brave (Focus profile)
@@ -134,26 +135,26 @@ Do not use `~`.
 -   Shows 🔴 in top bar
 -   Sends activation notification
 
-## 📚 Study Mode
+## Study Mode
 
 -   Moderate enforcement
 -   Uses Study Brave profile
 -   Shows 📚 in top bar
 
-## 💻 Code Mode
+## Code Mode
 
 -   Launches VS Code + Terminal
 -   Uses Code Brave profile
 -   Shows 💻 in top bar
 
-## 🔓 Exit Mode
+## Exit Mode
 
 -   Stops watchdog
 -   Restores notifications
 -   Removes top-bar indicator
 -   Sends exit confirmation notification
 
-## 🛠 Design Principles
+## Design Principles
 
 -   No fragile dconf rewriting
 -   No extension state stacking
@@ -163,7 +164,7 @@ Do not use `~`.
 
 Acadence behaves like a lightweight OS layer on top of GNOME.
 
-## 🚀 Future Improvements
+## Future Improvements
 
 -   Workspace auto-switch per mode
 -   Timer-based Focus sessions
@@ -172,6 +173,6 @@ Acadence behaves like a lightweight OS layer on top of GNOME.
 -   Installation automation for Brave profiles
 -   Systemd integration
 
-## 📜 License
+## License
 
 MIT
