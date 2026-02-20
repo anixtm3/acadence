@@ -41,14 +41,14 @@ If removed → indicator disappears
 
 ## Project Structure
 ```
-    acadence/
-    ├── launcher.sh
-    ├── install.sh
-    └── modes/
-        ├── focus.sh
-        ├── study.sh
-        ├── code.sh
-        └── exit.sh
+acadence/
+├── launcher.sh
+├── install.sh
+└── modes/
+    ├── focus.sh
+    ├── study.sh
+    ├── code.sh
+    └── exit.sh
 ```
 
 ## Requirements
@@ -74,14 +74,14 @@ Position: Left (recommended)
 
 ### Step 2: Make Scripts Executable
 ```
-    chmod +x modes/*.sh
+chmod +x modes/*.sh
 ```
 
 ### Step 3: Launch Modes
 
 Example:
 ```
-    ./modes/focus.sh
+./modes/focus.sh
 ```
 
 ## Future Improvements
