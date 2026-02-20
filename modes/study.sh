@@ -1,8 +1,9 @@
 #!/bin/bash
 
-echo "Starting Study Mode..."
-
 pkill -f acadence_watchdog 2>/dev/null
+sleep 0.1
+
+notify-send "Acadence" "📚 Study Mode Activated"
 
 echo "📚 STUDY MODE" > /tmp/acadence_mode
 

@@ -1,8 +1,9 @@
 #!/bin/bash
 
-echo "Starting Code Mode..."
-
 pkill -f acadence_watchdog 2>/dev/null
+sleep 0.1
+
+notify-send "Acadence" "💻 Code Mode Activated"
 
 echo "💻 CODE MODE" > /tmp/acadence_mode
 
