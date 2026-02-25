@@ -2,6 +2,7 @@
 
 PROJECT_ROOT="$(pwd)"
 VENV_PATH="$PROJECT_ROOT/venv"
+REQ_FILE="$PROJECT_ROOT/requirements.txt"
 
 echo "======================================"
 echo "        Acadence Installer"
@@ -30,6 +31,7 @@ fi
 if ! command -v notify-send &> /dev/null
 then
     echo "⚠ notify-send not found. Installing libnotify-bin..."
+    sudo apt update
     sudo apt install -y libnotify-bin
 else
     echo "✅ notify-send detected."
@@ -44,33 +46,45 @@ else
     echo "✅ Python3 detected."
 fi
 
-# --- Create venv if missing ---
+echo ""
+
+# --- Create virtual environment if missing ---
 if [ ! -d "$VENV_PATH" ]; then
     echo "Creating virtual environment..."
-    python3 -m venv venv
+    python3 -m venv "$VENV_PATH"
 fi
 
-# --- Install dependencies ---
+# --- Activate venv ---
 source "$VENV_PATH/bin/activate"
+
+# --- Upgrade pip ---
 pip install --upgrade pip >/dev/null
-pip install opencv-python >/dev/null
+
+# --- Install dependencies ---
+if [ -f "$REQ_FILE" ]; then
+    echo "Installing Python dependencies..."
+    pip install -r "$REQ_FILE"
+else
+    echo "❌ requirements.txt not found."
+    deactivate
+    exit 1
+fi
+
 deactivate
 
 echo "✅ Python environment ready."
-
 echo ""
 
 # --- Make scripts executable ---
 chmod +x modes/*.sh
 chmod +x tracking/*.py
-echo "✅ Mode and tracking scripts made executable."
+chmod +x launcher.sh 2>/dev/null
 
+echo "✅ Scripts made executable."
 echo ""
 
 # --- Create launcher directory ---
 mkdir -p ~/.local/share/applications
-
-# --- Create .desktop launchers ---
 
 create_launcher () {
     NAME=$1
@@ -98,11 +112,5 @@ echo "✅ Desktop launchers created."
 
 echo ""
 echo "======================================"
-echo "Next Steps:"
-echo "1. Install GNOME extension: Executor"
-echo "2. Configure it with command:"
-echo "   cat /tmp/acadence_mode"
-echo "3. Set refresh interval to 1 second"
-echo ""
-echo "Then launch Acadence from your app menu."
+echo "Installation complete."
 echo "======================================"
