@@ -2,30 +2,44 @@
 
 EXIT_PASSWORD="hakunamatata"
 
-# Ask password using popup
-input_password=$(zenity --password --title="Acadence Lock" --text="Enter password to exit Acadence Mode")
+# Ask for password using zenity
+USER_INPUT=$(zenity --password \
+    --title="Exit Acadence" \
+    --text="Enter exit password:")
 
-# If user pressed Cancel
-if [[ $? -ne 0 ]]; then
+# If user cancelled
+if [ $? -ne 0 ]; then
+    exit 0
+fi
+
+# If wrong password
+if [ "$USER_INPUT" != "$EXIT_PASSWORD" ]; then
+    zenity --error \
+        --title="Access Denied" \
+        --text="Incorrect password. Exit denied."
     exit 1
 fi
 
-# Check password
-if [[ "$input_password" != "$EXIT_PASSWORD" ]]; then
-    zenity --error --title="Acadence" --text="❌ Wrong Password. Exit Denied."
-    exit 1
-fi
+# ✅ Correct password — proceed with exit
 
 # Kill watchdog
 pkill -f acadence_watchdog 2>/dev/null
-sleep 0.1
+
+# Kill face monitor
+pkill -f face_monitor.py 2>/dev/null
 
 # Remove mode indicator
 rm -f /tmp/acadence_mode
 
-# Re-enable notifications
-gsettings set org.gnome.desktop.notifications show-banners true
+# Small delay for clean restore
 sleep 0.2
 
-# Success message
-zenity --info --title="Acadence" --text="🔓 Acadence Mode Exited"
+# Re-enable GNOME notification banners
+gsettings set org.gnome.desktop.notifications show-banners true
+
+# Success popup
+zenity --info \
+    --title="Acadence" \
+    --text="Acadence exited successfully."
+
+exit 0
