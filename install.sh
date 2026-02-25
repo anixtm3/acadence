@@ -1,5 +1,8 @@
 #!/bin/bash
 
+PROJECT_ROOT="$(pwd)"
+VENV_PATH="$PROJECT_ROOT/venv"
+
 echo "======================================"
 echo "        Acadence Installer"
 echo "======================================"
@@ -23,11 +26,44 @@ else
     echo "✅ Brave detected."
 fi
 
+# --- Check notify-send ---
+if ! command -v notify-send &> /dev/null
+then
+    echo "⚠ notify-send not found. Installing libnotify-bin..."
+    sudo apt install -y libnotify-bin
+else
+    echo "✅ notify-send detected."
+fi
+
+# --- Check Python ---
+if ! command -v python3 &> /dev/null
+then
+    echo "❌ Python3 not found."
+    exit 1
+else
+    echo "✅ Python3 detected."
+fi
+
+# --- Create venv if missing ---
+if [ ! -d "$VENV_PATH" ]; then
+    echo "Creating virtual environment..."
+    python3 -m venv venv
+fi
+
+# --- Install dependencies ---
+source "$VENV_PATH/bin/activate"
+pip install --upgrade pip >/dev/null
+pip install opencv-python >/dev/null
+deactivate
+
+echo "✅ Python environment ready."
+
 echo ""
 
 # --- Make scripts executable ---
 chmod +x modes/*.sh
-echo "✅ Mode scripts made executable."
+chmod +x tracking/*.py
+echo "✅ Mode and tracking scripts made executable."
 
 echo ""
 
@@ -44,7 +80,7 @@ create_launcher () {
 [Desktop Entry]
 Version=1.0
 Name=Acadence $NAME
-Exec=$(pwd)/modes/$SCRIPT
+Exec=$PROJECT_ROOT/modes/$SCRIPT
 Type=Application
 Terminal=false
 Categories=Utility;
@@ -69,4 +105,4 @@ echo "   cat /tmp/acadence_mode"
 echo "3. Set refresh interval to 1 second"
 echo ""
 echo "Then launch Acadence from your app menu."
-echo "======================================" 
+echo "======================================"
