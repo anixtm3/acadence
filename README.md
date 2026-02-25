@@ -88,7 +88,7 @@ chmod +x install.sh
 The installer will:
 
 - Create Python virtual environment
-- Install OpenCV
+- Install Python dependencies from requirements.txt
 - Make scripts executable
 - Create desktop launchers
 
