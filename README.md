@@ -59,6 +59,7 @@ If no face is detected:
 acadence/
 ├── modes/
 ├── tracking/
+├── requirements.txt
 ├── .gitignore
 ├── LICENSE
 ├── README.md
@@ -90,6 +91,32 @@ The installer will:
 - Install OpenCV
 - Make scripts executable
 - Create desktop launchers
+
+## Dependency Management
+Acadence uses a Python virtual environment and installs all required
+packages from `requirements.txt`.
+
+To generate `requirements.txt` after installing dependencies:
+```
+source venv/bin/activate
+pip freeze > requirements.txt
+```
+
+The installer automatically:
+
+- Creates a virtual environment (`venv/`)
+- Upgrades pip
+- Installs all dependencies from `requirements.txt`
+
+This ensures reproducible installations across systems.
+
+If you add new Python dependencies:
+```
+pip install <package-name>
+pip freeze > requirements.txt
+```
+
+Commit the updated `requirements.txt` to the repository.
 
 ## Executor Setup
 Install the GNOME extension **Executor**.
