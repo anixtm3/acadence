@@ -1,178 +1,130 @@
 # Acadence
+![GNOME](https://img.shields.io/badge/GNOME-46-blue?logo=gnome)
+![Ubuntu](https://img.shields.io/badge/Ubuntu-Tested-orange?logo=ubuntu)
+![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Status](https://img.shields.io/badge/Status-Active-success)
 
-A state-aware productivity mode engine for GNOME.
+A state-aware productivity engine for GNOME.
 
 Acadence transforms your Linux desktop into a structured academic
-environment with enforceable modes, live UI feedback, and instant
-keyboard switching.
+environment with enforceable modes, live UI feedback, and AI-based
+focus monitoring.
 
-Built and tested on **Ubuntu GNOME 46**.
+Built and tested on Ubuntu GNOME 46.
 
-## Features
+## Highlights
+- Strict Focus Mode
+- Face Presence Monitoring (OpenCV)
+- Critical Focus Alerts (bypass DND)
+- Watchdog-Based Distraction Blocking
+- Password-Protected Exit
+- Live Top-Bar Mode Indicator
+- Isolated Python Virtual Environment
 
--   🔴 Focus Mode (strict enforcement)
--   📚 Study Mode
--   💻 Code Mode
--   🔓 Exit Mode
--   ⌨ Global keyboard shortcuts
--   🧠 Live top-bar state indicator
--   🛡 Active distraction suppression (watchdog)
--   🔄 Clean mode switching (no stacking / no ghost states)
+## How Acadence Works
+Acadence is built around deterministic lifecycle control.
 
-## How It Works
+### Focus Mode
+- Disables GNOME notification banners
+- Launches Brave (Default profile)
+- Starts watchdog (kills distractions every 3 seconds)
+- Starts silent face monitor
+- Shows state in GNOME top bar
+- Sends activation notification
 
-Acadence is built on three core components:
+If no face is detected:
 
-### Watchdog Enforcement
+- Sends critical notification  
+  Message: "You aren't focusing"
+- After 30 seconds → forces Exit Mode
 
-Each mode starts a background watchdog that:
+### Study Mode
+- Moderate enforcement
+- Displays study indicator in top bar
 
--   Kills distracting applications
--   Runs continuously
--   Stops cleanly when switching modes
+### Code Mode
+- Launches development environment
+- Displays code indicator in top bar
 
-The watchdog is safely terminated before any new mode starts.
+### Exit Mode
+- Requires password
+- Stops watchdog
+- Stops face monitor
+- Restores GNOME notifications
+- Removes top-bar indicator
 
-### Live Top-Bar Indicator (Executor)
-
-Acadence uses the GNOME **Executor** extension with this command:
-```
-cat /tmp/acadence_mode
-```
-
-Behavior:
-
--   If `/tmp/acadence_mode` exists → its contents are shown in the top
-    bar
--   If removed → indicator disappears
--   Switching modes simply rewrites that file
-
-This avoids fragile dconf manipulation and ensures stable state
-switching.
-
-### Keyboard Shortcuts
-
-Default shortcuts:
-
-|      Shortcut       |   Mode   |
-|---------------------|----------|
-| **Shift + Alt + F** | 🔴 Focus |
-| **Shift + Alt + S** | 📚 Study |
-| **Shift + Alt + C** | 💻 Code  |
-| **Shift + Alt + E** | 🔓 Exit  |
-
-Shortcuts run the corresponding scripts directly.
-
-## Project Structure
+## Architecture
 ```
 acadence/
-├── launcher.sh
+├── modes/
+├── tracking/
+├── .gitignore
+├── LICENSE
+├── README.md
 ├── install.sh
-└── modes/
-    ├── focus.sh
-    ├── study.sh
-    ├── code.sh
-    └── exit.sh
+└── launcher.sh
 ```
 
 ## Requirements
+- Ubuntu / GNOME 46
+- Brave browser
+- GNOME Shell Extension: Executor
+- Python 3
+- libnotify-bin
 
--   Ubuntu / GNOME 46
--   Brave browser
--   GNOME Shell Extension: Executor
--   libnotify-bin (for notifications)
-
-Install notifications support if needed:
+Install notification support if needed:
 ```
 sudo apt install libnotify-bin
 ```
 
-## Setup
-
-### Step 1: Install Executor Extension
-
-Install via GNOME Extension Manager.
-
-Create one command:
-
-Name: `Acadence Mode`
-
-Command: `cat /tmp/acadence_mode`
-
-Interval: `1`
-
-Position: `Left` (recommended)
-
-### Step 2: Run Installer
+## Installation
 ```
 chmod +x install.sh
 ./install.sh
 ```
 
-This will:
--   Make scripts executable
--   Create desktop launchers
--   Guide Executor setup
+The installer will:
 
-### Step 3: Optional: Add Keyboard Shortcuts
+- Create Python virtual environment
+- Install OpenCV
+- Make scripts executable
+- Create desktop launchers
 
-In GNOME:
+## Executor Setup
+Install the GNOME extension **Executor**.
 
-Settings → Keyboard → Custom Shortcuts
+Command:
+```
+cat /tmp/acadence_mode
+```
+
+Refresh interval: 1 second
+
+## Keyboard Shortcuts (Optional)
+GNOME → Settings → Keyboard → Custom Shortcuts
 
 Use absolute paths like:
 ```
 /home/youruser/path/to/acadence/modes/focus.sh
 ```
-
 Do not use `~`.
 
-## Focus Mode
+## Design Philosophy
+- Deterministic lifecycle control
+- No extension stacking
+- No race-condition switching
+- No fragile dconf manipulation
+- Modular enforcement architecture
 
--   Disables notifications
--   Launches Brave (Focus profile)
--   Starts watchdog
--   Shows 🔴 in top bar
--   Sends activation notification
+Acadence behaves like a lightweight academic OS layer on top of GNOME.
 
-## Study Mode
-
--   Moderate enforcement
--   Uses Study Brave profile
--   Shows 📚 in top bar
-
-## Code Mode
-
--   Launches VS Code + Terminal
--   Uses Code Brave profile
--   Shows 💻 in top bar
-
-## Exit Mode
-
--   Stops watchdog
--   Restores notifications
--   Removes top-bar indicator
--   Sends exit confirmation notification
-
-## Design Principles
-
--   No fragile dconf rewriting
--   No extension state stacking
--   No race-condition switching
--   Deterministic lifecycle control
--   Minimal GNOME intrusion
-
-Acadence behaves like a lightweight OS layer on top of GNOME.
-
-## Future Improvements
-
--   Workspace auto-switch per mode
--   Timer-based Focus sessions
--   Session logging
--   Passphrase unlock for Focus
--   Installation automation for Brave profiles
--   Systemd integration
+## Roadmap
+- Session analytics
+- Break mode instead of hard exit
+- Strict exam mode
+- Workspace auto-switching
+- Systemd integration
 
 ## License
-
 MIT
