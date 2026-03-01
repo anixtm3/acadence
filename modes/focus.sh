@@ -11,11 +11,26 @@ pkill -f acadence_watchdog 2>/dev/null
 pkill -f face_monitor.py 2>/dev/null
 sleep 0.2
 
-# Notification
-notify-send "Acadence" "🔴 Focus Mode Activated"
-
 # Mode indicator
 echo "🔴 FOCUS MODE" > /tmp/acadence_mode
+
+# ===== START SESSION LOGGING =====
+SESSION_ID=$("$VENV_PATH/bin/python" - <<EOF
+import sys
+sys.path.append("$PROJECT_ROOT")
+from db.session_logger import start_session
+print(start_session("FOCUS"))
+EOF
+)
+
+echo "$SESSION_ID" > /tmp/acadence_session
+
+# Initialize face warning counter
+echo 0 > /tmp/acadence_warnings
+# ==================================
+
+# Notification
+notify-send "Acadence" "🔴 Focus Mode Activated"
 
 # Disable GNOME notifications
 gsettings set org.gnome.desktop.notifications show-banners false
