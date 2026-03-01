@@ -1,157 +1,155 @@
 # Acadence
-![GNOME](https://img.shields.io/badge/GNOME-46-blue?logo=gnome)
-![Ubuntu](https://img.shields.io/badge/Ubuntu-Tested-orange?logo=ubuntu)
-![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)
-![License](https://img.shields.io/badge/License-MIT-green)
-![Status](https://img.shields.io/badge/Status-Active-success)
 
-A state-aware productivity engine for GNOME.
+Acadence is a behavior-driven productivity operating layer built on Linux. It enforces deep work through controlled execution modes, distraction blocking, face-based presence monitoring, and persistent session tracking.
 
-Acadence transforms your Linux desktop into a structured academic
-environment with enforceable modes, live UI feedback, and AI-based
-focus monitoring.
+This is not a productivity app.
+It is an execution environment for disciplined academic work.
 
-Built and tested on Ubuntu GNOME 46.
+## Core Philosophy
 
-## Highlights
-- Strict Focus Mode
-- Face Presence Monitoring (OpenCV)
-- Critical Focus Alerts (bypass DND)
-- Watchdog-Based Distraction Blocking
-- Password-Protected Exit
-- Live Top-Bar Mode Indicator
-- Isolated Python Virtual Environment
+Acadence is designed around one principle:
 
-## How Acadence Works
-Acadence is built around deterministic lifecycle control.
+> Environment controls behavior.
 
-### Focus Mode
-- Disables GNOME notification banners
-- Launches Brave (Default profile)
-- Starts watchdog (kills distractions every 3 seconds)
-- Starts silent face monitor
-- Shows state in GNOME top bar
-- Sends activation notification
+Instead of relying on willpower, Acadence restructures the operating system environment to eliminate distractions and enforce intentional work sessions.
 
-If no face is detected:
+## Features
 
-- Sends critical notification  
-  Message: "You aren't focusing"
-- After 30 seconds → forces Exit Mode
+### 1. Productivity Modes
 
-### Study Mode
-- Moderate enforcement
-- Displays study indicator in top bar
+Acadence provides dedicated execution modes:
 
-### Code Mode
-- Launches development environment
-- Displays code indicator in top bar
+* **Focus Mode** – Deep work with face monitoring and session tracking
+* **Study Mode** – Structured academic reading environment
+* **Code Mode** – Development-focused environment
 
-### Exit Mode
-- Requires password
-- Stops watchdog
-- Stops face monitor
-- Restores GNOME notifications
-- Removes top-bar indicator
+Each mode:
 
-## Architecture
+* Kills distracting applications (Firefox, Discord, Telegram, Spotify)
+* Disables GNOME notification banners
+* Launches only allowed applications
+* Activates a background watchdog to continuously block distractions
+
+### 2. Watchdog Enforcement
+
+A background `acadence_watchdog` process runs every 3 seconds and terminates blocked applications if launched.
+
+This ensures environment integrity during active sessions.
+
+### 3. Face-Based Discipline System (Focus Mode)
+
+Focus Mode activates a real-time OpenCV face detection monitor.
+
+* If your face is not detected consistently, a warning is issued.
+* Warnings are counted.
+* If absence exceeds a threshold (30 seconds), forced exit is triggered.
+
+This enforces physical presence and prevents passive distraction.
+
+### 4. Persistent Session Tracking
+
+Acadence logs every Focus session to SQLite:
+
+Database: `db/acadence.db`
+
+Session fields:
+
+* id
+* mode
+* start_time
+* end_time
+* duration_seconds
+* face_warnings
+* forced_exit
+
+This enables long-term analytics, accountability, and performance review.
+
+## Architecture Overview
+
+```
+Mode Script (focus/study/code)
+        ↓
+Environment Lock (notifications + pkill + watchdog)
+        ↓
+Optional Face Monitor (Focus Mode)
+        ↓
+Session Logger (SQLite)
+        ↓
+Forced Exit Pipeline (if discipline breaks)
+```
+
+## Project Structure
+
 ```
 acadence/
 ├── modes/
+│   ├── focus.sh
+│   ├── study.sh
+│   ├── code.sh
+│   └── exit.sh
+│
 ├── tracking/
-├── requirements.txt
-├── .gitignore
-├── LICENSE
-├── README.md
-├── install.sh
-└── launcher.sh
+│   └── face_monitor.py
+│
+├── db/
+│   ├── init_db.py
+│   └── session_logger.py
+│
+├── venv/
+└── db/acadence.db
 ```
 
 ## Requirements
-- Ubuntu / GNOME 46
-- Brave browser
-- GNOME Shell Extension: Executor
-- Python 3
-- libnotify-bin
 
-Install notification support if needed:
+* Linux (GNOME-based environment recommended)
+* Python 3
+* OpenCV
+* SQLite3
+* notify-send
+* Brave Browser
+* Obsidian
+* VS Code
+* Evince
+
+## Setup
+
+1. Clone the repository
+2. Create a Python virtual environment
+3. Install dependencies
+4. Run `init_db.py` to initialize the database
+5. Execute any mode script
+
+Example:
+
 ```
-sudo apt install libnotify-bin
-```
-
-## Installation
-```
-chmod +x install.sh
-./install.sh
-```
-
-The installer will:
-
-- Create Python virtual environment
-- Install Python dependencies from requirements.txt
-- Make scripts executable
-- Create desktop launchers
-
-## Dependency Management
-Acadence uses a Python virtual environment and installs all required
-packages from `requirements.txt`.
-
-To generate `requirements.txt` after installing dependencies:
-```
-source venv/bin/activate
-pip freeze > requirements.txt
+bash modes/focus.sh
 ```
 
-The installer automatically:
+## Current Status
 
-- Creates a virtual environment (`venv/`)
-- Upgrades pip
-- Installs all dependencies from `requirements.txt`
+Acadence includes:
 
-This ensures reproducible installations across systems.
+* Enforced execution modes
+* Distraction blocking
+* Face-based discipline trigger
+* Persistent session logging
+* Forced exit control
 
-If you add new Python dependencies:
-```
-pip install <package-name>
-pip freeze > requirements.txt
-```
+Planned expansions:
 
-Commit the updated `requirements.txt` to the repository.
-
-## Executor Setup
-Install the GNOME extension **Executor**.
-
-Command:
-```
-cat /tmp/acadence_mode
-```
-
-Refresh interval: 1 second
-
-## Keyboard Shortcuts (Optional)
-GNOME → Settings → Keyboard → Custom Shortcuts
-
-Use absolute paths like:
-```
-/home/youruser/path/to/acadence/modes/focus.sh
-```
-Do not use `~`.
-
-## Design Philosophy
-- Deterministic lifecycle control
-- No extension stacking
-- No race-condition switching
-- No fragile dconf manipulation
-- Modular enforcement architecture
-
-Acadence behaves like a lightweight academic OS layer on top of GNOME.
-
-## Roadmap
-- Session analytics
-- Break mode instead of hard exit
-- Strict exam mode
-- Workspace auto-switching
-- Systemd integration
+* CLI analytics dashboard
+* Weekly performance reports
+* Streak system
+* Anti-tamper protection
+* Remote supervisory architecture
 
 ## License
-MIT
+
+MIT License (recommended)
+
+## Author
+
+Aniket Dixit
+BTech Data Science (2024–2028)
+
+Acadence is an experiment in environmental discipline engineering.
