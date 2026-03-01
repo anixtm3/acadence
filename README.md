@@ -5,6 +5,8 @@ Acadence is a behavior-driven productivity operating layer built on Linux. It en
 This is not a productivity app.
 It is an execution environment for disciplined academic work.
 
+---
+
 ## Core Philosophy
 
 Acadence is designed around one principle:
@@ -12,6 +14,8 @@ Acadence is designed around one principle:
 > Environment controls behavior.
 
 Instead of relying on willpower, Acadence restructures the operating system environment to eliminate distractions and enforce intentional work sessions.
+
+---
 
 ## Features
 
@@ -30,11 +34,15 @@ Each mode:
 * Launches only allowed applications
 * Activates a background watchdog to continuously block distractions
 
+---
+
 ### 2. Watchdog Enforcement
 
 A background `acadence_watchdog` process runs every 3 seconds and terminates blocked applications if launched.
 
 This ensures environment integrity during active sessions.
+
+---
 
 ### 3. Face-Based Discipline System (Focus Mode)
 
@@ -45,6 +53,8 @@ Focus Mode activates a real-time OpenCV face detection monitor.
 * If absence exceeds a threshold (30 seconds), forced exit is triggered.
 
 This enforces physical presence and prevents passive distraction.
+
+---
 
 ### 4. Persistent Session Tracking
 
@@ -64,6 +74,8 @@ Session fields:
 
 This enables long-term analytics, accountability, and performance review.
 
+---
+
 ## Architecture Overview
 
 ```
@@ -77,6 +89,8 @@ Session Logger (SQLite)
         ↓
 Forced Exit Pipeline (if discipline breaks)
 ```
+
+---
 
 ## Project Structure
 
@@ -99,6 +113,8 @@ acadence/
 └── db/acadence.db
 ```
 
+---
+
 ## Requirements
 
 * Linux (GNOME-based environment recommended)
@@ -110,6 +126,8 @@ acadence/
 * Obsidian
 * VS Code
 * Evince
+
+---
 
 ## Setup
 
@@ -124,6 +142,8 @@ Example:
 ```
 bash modes/focus.sh
 ```
+
+---
 
 ## Current Status
 
@@ -143,13 +163,19 @@ Planned expansions:
 * Anti-tamper protection
 * Remote supervisory architecture
 
+---
+
 ## License
 
 MIT License (recommended)
+
+---
 
 ## Author
 
 Aniket Dixit
 BTech Data Science (2024–2028)
+
+---
 
 Acadence is an experiment in environmental discipline engineering.
