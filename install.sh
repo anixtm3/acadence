@@ -3,47 +3,47 @@
 PROJECT_ROOT="$(pwd)"
 VENV_PATH="$PROJECT_ROOT/venv"
 REQ_FILE="$PROJECT_ROOT/requirements.txt"
+DB_INIT_SCRIPT="$PROJECT_ROOT/db/init_db.py"
 
-echo "======================================"
-echo "        Acadence Installer"
-echo "======================================"
-echo ""
+ echo "======================================"
+ echo "        Acadence Installer"
+ echo "======================================"
+ echo ""
 
 # --- Check GNOME ---
 if ! command -v gnome-shell &> /dev/null
 then
-    echo "❌ GNOME not detected. Acadence requires GNOME."
+    echo "GNOME not detected. Acadence requires GNOME."
     exit 1
 else
-    echo "✅ GNOME detected."
+    echo "GNOME detected."
 fi
 
 # --- Check Brave ---
 if ! command -v brave &> /dev/null
 then
-    echo "⚠ Brave browser not found."
-    echo "Install Brave before using Acadence."
+    echo "Brave browser not found. Install Brave before using Acadence."
 else
-    echo "✅ Brave detected."
+    echo "Brave detected."
 fi
 
 # --- Check notify-send ---
 if ! command -v notify-send &> /dev/null
 then
-    echo "⚠ notify-send not found. Installing libnotify-bin..."
+    echo "Installing libnotify-bin..."
     sudo apt update
     sudo apt install -y libnotify-bin
 else
-    echo "✅ notify-send detected."
+    echo "notify-send detected."
 fi
 
 # --- Check Python ---
 if ! command -v python3 &> /dev/null
 then
-    echo "❌ Python3 not found."
+    echo "Python3 not found."
     exit 1
 else
-    echo "✅ Python3 detected."
+    echo "Python3 detected."
 fi
 
 echo ""
@@ -65,23 +65,32 @@ if [ -f "$REQ_FILE" ]; then
     echo "Installing Python dependencies..."
     pip install -r "$REQ_FILE"
 else
-    echo "❌ requirements.txt not found."
+    echo "requirements.txt not found."
+    deactivate
+    exit 1
+fi
+
+# --- Initialize database ---
+if [ -f "$DB_INIT_SCRIPT" ]; then
+    echo "Initializing database..."
+    python "$DB_INIT_SCRIPT"
+else
+    echo "init_db.py not found."
     deactivate
     exit 1
 fi
 
 deactivate
 
-echo "✅ Python environment ready."
+echo "Python environment ready."
 echo ""
 
 # --- Make scripts executable ---
-chmod +x modes/*.sh
-chmod +x tracking/*.py
-chmod +x launcher.sh 2>/dev/null
+chmod +x modes/*.sh 2>/dev/null
+chmod +x tracking/*.py 2>/dev/null
 
-echo "✅ Scripts made executable."
-echo ""
+ echo "Scripts made executable."
+ echo ""
 
 # --- Create launcher directory ---
 mkdir -p ~/.local/share/applications
@@ -108,9 +117,8 @@ create_launcher "Study" "study.sh"
 create_launcher "Code" "code.sh"
 create_launcher "Exit" "exit.sh"
 
-echo "✅ Desktop launchers created."
-
-echo ""
-echo "======================================"
-echo "Installation complete."
-echo "======================================"
+ echo "Desktop launchers created."
+ echo ""
+ echo "======================================"
+ echo "Installation complete."
+ echo "======================================"
