@@ -1,68 +1,64 @@
 # Acadence
 
-Acadence is a behavior-driven productivity operating layer built on Linux. It enforces deep work through controlled execution modes, distraction blocking, face-based presence monitoring, and persistent session tracking.
+Acadence is a behavior-driven productivity operating layer built for Linux (GNOME). It enforces deep work through controlled execution modes, distraction blocking, face-based presence monitoring, and persistent session tracking.
 
-This is not a productivity app.
-It is an execution environment for disciplined academic work.
-
----
-
-## Core Philosophy
-
-Acadence is designed around one principle:
-
-> Environment controls behavior.
-
-Instead of relying on willpower, Acadence restructures the operating system environment to eliminate distractions and enforce intentional work sessions.
+Acadence is not a productivity app.
+It is an execution environment designed to reduce reliance on willpower and instead engineer discipline through system control.
 
 ---
 
-## Features
+## Philosophy
 
-### 1. Productivity Modes
+Acadence operates on a simple principle:
+
+Environment shapes behavior.
+
+Rather than trusting motivation, Acadence modifies the operating environment to remove distractions, enforce intentional sessions, and track behavioral integrity.
+
+---
+
+## Core Features
+
+### Productivity Modes
 
 Acadence provides dedicated execution modes:
 
-* **Focus Mode** – Deep work with face monitoring and session tracking
-* **Study Mode** – Structured academic reading environment
-* **Code Mode** – Development-focused environment
+* Focus Mode — Deep work with face monitoring and session tracking
+* Study Mode — Structured academic reading environment
+* Code Mode — Development-focused environment
 
 Each mode:
 
-* Kills distracting applications (Firefox, Discord, Telegram, Spotify)
+* Terminates distracting applications (Firefox, Discord, Telegram, Spotify)
 * Disables GNOME notification banners
-* Launches only allowed applications
-* Activates a background watchdog to continuously block distractions
+* Launches only approved applications
+* Activates a background watchdog that continuously enforces restrictions
 
----
+### Watchdog Enforcement
 
-### 2. Watchdog Enforcement
+A background `acadence_watchdog` process runs every 3 seconds and terminates blocked applications if launched during an active session.
 
-A background `acadence_watchdog` process runs every 3 seconds and terminates blocked applications if launched.
+This ensures environmental integrity throughout the session.
 
-This ensures environment integrity during active sessions.
-
----
-
-### 3. Face-Based Discipline System (Focus Mode)
+### Face-Based Discipline System (Focus Mode)
 
 Focus Mode activates a real-time OpenCV face detection monitor.
 
-* If your face is not detected consistently, a warning is issued.
-* Warnings are counted.
-* If absence exceeds a threshold (30 seconds), forced exit is triggered.
+* If your face is not detected consistently, a warning notification is issued.
+* Warnings are counted during the session.
+* If absence exceeds the configured threshold (30 seconds), a forced exit is triggered.
 
-This enforces physical presence and prevents passive distraction.
+This enforces physical presence and prevents passive disengagement.
 
----
+### Persistent Session Tracking
 
-### 4. Persistent Session Tracking
+All Focus sessions are logged to a local SQLite database.
 
-Acadence logs every Focus session to SQLite:
+Database location:
 
-Database: `db/acadence.db`
+`db/acadence.db`
 
-Session fields:
+Each session stores:
 
 * id
 * mode
@@ -72,22 +68,22 @@ Session fields:
 * face_warnings
 * forced_exit
 
-This enables long-term analytics, accountability, and performance review.
+This enables long-term accountability, analytics, and performance evaluation.
 
 ---
 
 ## Architecture Overview
 
 ```
-Mode Script (focus/study/code)
+Mode Script (focus / study / code)
         ↓
-Environment Lock (notifications + pkill + watchdog)
+Environment Lock (notifications disabled + pkill + watchdog)
         ↓
-Optional Face Monitor (Focus Mode)
+Optional Face Monitor (Focus Mode only)
         ↓
 Session Logger (SQLite)
         ↓
-Forced Exit Pipeline (if discipline breaks)
+Forced Exit Pipeline (if discipline conditions fail)
 ```
 
 ---
@@ -96,6 +92,11 @@ Forced Exit Pipeline (if discipline breaks)
 
 ```
 acadence/
+├── db/
+│   ├── init_db.py
+│   ├── session_logger.py
+│   └── acadence.db        # generated at runtime (ignored by git)
+│
 ├── modes/
 │   ├── focus.sh
 │   ├── study.sh
@@ -105,55 +106,75 @@ acadence/
 ├── tracking/
 │   └── face_monitor.py
 │
-├── db/
-│   ├── init_db.py
-│   └── session_logger.py
-│
-├── venv/
-└── db/acadence.db
+├── install.sh
+├── requirements.txt
+├── .gitignore
+├── LICENSE
+└── README.md
 ```
+
+Note: `acadence.db` is generated locally and should not be committed to version control.
 
 ---
 
 ## Requirements
 
-* Linux (GNOME-based environment recommended)
+* Linux (GNOME recommended)
 * Python 3
 * OpenCV
 * SQLite3
-* notify-send
+* notify-send (libnotify-bin)
 * Brave Browser
 * Obsidian
-* VS Code
+* Visual Studio Code
 * Evince
 
 ---
 
-## Setup
+## Installation
 
 1. Clone the repository
-2. Create a Python virtual environment
-3. Install dependencies
-4. Run `init_db.py` to initialize the database
-5. Execute any mode script
+2. Run the installer:
 
-Example:
+```
+bash install.sh
+```
+
+The installer will:
+
+* Create a Python virtual environment
+* Install dependencies from `requirements.txt`
+* Initialize the SQLite database
+* Make scripts executable
+* Create desktop launchers
+
+---
+
+## Running Modes
+
+Modes can be launched via desktop entries or directly:
 
 ```
 bash modes/focus.sh
+bash modes/study.sh
+bash modes/code.sh
+bash modes/exit.sh
 ```
 
 ---
 
-## Current Status
+## Data Reset
 
-Acadence includes:
+To reset session history:
 
-* Enforced execution modes
-* Distraction blocking
-* Face-based discipline trigger
-* Persistent session logging
-* Forced exit control
+```
+rm db/acadence.db
+python db/init_db.py
+```
+
+---
+
+## Roadmap
 
 Planned expansions:
 
@@ -167,7 +188,7 @@ Planned expansions:
 
 ## License
 
-MIT License (recommended)
+MIT License
 
 ---
 
