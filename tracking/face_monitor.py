@@ -1,13 +1,14 @@
 import cv2
 import time
-import os
 import subprocess
+from pathlib import Path
 
 # ===== CONFIG =====
 ABSENCE_LIMIT = 30          # Seconds before triggering exit
 MISS_FRAME_LIMIT = 10       # Frame smoothing
 NOTIFY_COOLDOWN = 10        # Seconds between notifications
 EXIT_SCRIPT = "modes/exit.sh"
+WARNING_FILE = Path("/tmp/acadence_warnings")
 # ==================
 
 face_cascade = cv2.CascadeClassifier(
@@ -22,6 +23,20 @@ if not cap.isOpened():
 last_seen = time.time()
 missed_frames = 0
 last_notification = 0
+
+
+def increment_warning():
+    if WARNING_FILE.exists():
+        try:
+            count = int(WARNING_FILE.read_text().strip())
+        except:
+            count = 0
+    else:
+        count = 0
+
+    count += 1
+    WARNING_FILE.write_text(str(count))
+
 
 while True:
     ret, frame = cap.read()
@@ -54,6 +69,8 @@ while True:
                     "Acadence",
                     "You aren't focusing"
                 ])
+
+                increment_warning()
                 last_notification = current_time
 
     # Trigger exit if absent too long
