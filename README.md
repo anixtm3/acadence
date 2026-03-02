@@ -1,202 +1,152 @@
 # Acadence
 
-Acadence is a behavior-driven productivity operating layer built for Linux (GNOME). It enforces deep work through controlled execution modes, distraction blocking, face-based presence monitoring, and persistent session tracking.
+Acadence is a cross-platform productivity enforcement layer designed to run on top of existing operating systems.
 
-Acadence is not a productivity app.
-It is an execution environment designed to reduce reliance on willpower and instead engineer discipline through system control.
-
----
-
-## Philosophy
-
-Acadence operates on a simple principle:
-
-Environment shapes behavior.
-
-Rather than trusting motivation, Acadence modifies the operating environment to remove distractions, enforce intentional sessions, and track behavioral integrity.
+It does not replace your OS.
+It controls behavioral state inside it.
 
 ---
 
-## Core Features
+## What Acadence Is
 
-### Productivity Modes
+Acadence is a discipline engine that enforces structured productivity modes such as:
 
-Acadence provides dedicated execution modes:
+* Focus Mode
+* Study Mode
+* Code Mode
 
-* Focus Mode — Deep work with face monitoring and session tracking
-* Study Mode — Structured academic reading environment
-* Code Mode — Development-focused environment
+It blocks distracting applications, monitors presence using computer vision, logs session data, and enforces controlled exits.
 
-Each mode:
-
-* Terminates distracting applications (Firefox, Discord, Telegram, Spotify)
-* Disables GNOME notification banners
-* Launches only approved applications
-* Activates a background watchdog that continuously enforces restrictions
-
-### Watchdog Enforcement
-
-A background `acadence_watchdog` process runs every 3 seconds and terminates blocked applications if launched during an active session.
-
-This ensures environmental integrity throughout the session.
-
-### Face-Based Discipline System (Focus Mode)
-
-Focus Mode activates a real-time OpenCV face detection monitor.
-
-* If your face is not detected consistently, a warning notification is issued.
-* Warnings are counted during the session.
-* If absence exceeds the configured threshold (30 seconds), a forced exit is triggered.
-
-This enforces physical presence and prevents passive disengagement.
-
-### Persistent Session Tracking
-
-All Focus sessions are logged to a local SQLite database.
-
-Database location:
-
-`db/acadence.db`
-
-Each session stores:
-
-* id
-* mode
-* start_time
-* end_time
-* duration_seconds
-* face_warnings
-* forced_exit
-
-This enables long-term accountability, analytics, and performance evaluation.
+The goal is behavioral consistency — not convenience.
 
 ---
 
-## Architecture Overview
+## Architecture
 
-```
-Mode Script (focus / study / code)
-        ↓
-Environment Lock (notifications disabled + pkill + watchdog)
-        ↓
-Optional Face Monitor (Focus Mode only)
-        ↓
-Session Logger (SQLite)
-        ↓
-Forced Exit Pipeline (if discipline conditions fail)
-```
-
----
-
-## Project Structure
+Current structure (Linux v1):
 
 ```
 acadence/
-├── db/
-│   ├── init_db.py
-│   ├── session_logger.py
-│   └── acadence.db        # generated at runtime (ignored by git)
 │
-├── modes/
-│   ├── focus.sh
-│   ├── study.sh
-│   ├── code.sh
-│   └── exit.sh
+├── linux_v1/
+│   ├── modes/
+│   │   ├── focus.sh
+│   │   ├── study.sh
+│   │   ├── code.sh
+│   │   └── exit.sh
+│   │
+│   ├── tracking/
+│   │   └── face_monitor.py
+│   │
+│   ├── db/
+│   │   ├── init_db.py
+│   │   └── session_logger.py
 │
-├── tracking/
-│   └── face_monitor.py
-│
-├── install.sh
+├── venv/
 ├── requirements.txt
-├── .gitignore
-├── LICENSE
-└── README.md
+└── install.sh
 ```
 
-Note: `acadence.db` is generated locally and should not be committed to version control.
+### Core Components
+
+**Mode Engine (Bash)**
+Controls system state, blocks apps, manages watchdog process.
+
+**Face Monitor (Python + OpenCV)**
+Detects absence and triggers forced exit.
+
+**Session Logger (SQLite)**
+Tracks:
+
+* Mode
+* Start time
+* End time
+* Duration
+* Face warnings
+* Forced exit flag
+
+**Watchdog System**
+Detached PID-based background process that continuously blocks restricted applications.
 
 ---
 
-## Requirements
+## How Modes Work
 
-* Linux (GNOME recommended)
-* Python 3
-* OpenCV
-* SQLite3
-* notify-send (libnotify-bin)
-* Brave Browser
-* Obsidian
-* Visual Studio Code
-* Evince
+When a mode starts:
+
+1. Previous watchdog is killed.
+2. Distraction apps are terminated.
+3. GNOME notifications are disabled.
+4. Allowed apps are launched.
+5. A detached watchdog loop begins.
+6. (Focus Mode only) Face monitor activates.
+
+If no face is detected for 30 seconds:
+
+* `exit.sh --force` is triggered.
+* Session is logged with `forced_exit = 1`.
+* Watchdog is terminated.
+* System state is restored.
+
+Manual exit requires password authentication.
 
 ---
 
-## Installation
+## Installation (Linux - GNOME Required)
 
-1. Clone the repository
-2. Run the installer:
+From project root:
 
 ```
 bash install.sh
 ```
 
-The installer will:
+Installer will:
 
-* Create a Python virtual environment
-* Install dependencies from `requirements.txt`
-* Initialize the SQLite database
-* Make scripts executable
+* Verify GNOME
+* Check required system tools
+* Create Python virtual environment
+* Install dependencies
+* Initialize SQLite database
 * Create desktop launchers
 
 ---
 
-## Running Modes
+## Requirements
 
-Modes can be launched via desktop entries or directly:
-
-```
-bash modes/focus.sh
-bash modes/study.sh
-bash modes/code.sh
-bash modes/exit.sh
-```
+* Ubuntu / GNOME-based environment
+* Python 3
+* Brave browser
+* OpenCV (installed via requirements.txt)
+* notify-send
 
 ---
 
-## Data Reset
+## Design Philosophy
 
-To reset session history:
+Acadence is not a productivity assistant.
 
-```
-rm db/acadence.db
-python db/init_db.py
-```
+It is a behavioral enforcement layer.
+
+It reduces system freedom during structured work sessions to eliminate distraction paths.
+
+Discipline is enforced at the environment level.
 
 ---
 
 ## Roadmap
 
-Planned expansions:
-
-* CLI analytics dashboard
-* Weekly performance reports
-* Streak system
-* Anti-tamper protection
-* Remote supervisory architecture
+* Refactor into Core + OS Adapter architecture
+* Windows adapter implementation
+* Behavioral analytics engine
+* Adaptive enforcement model
+* Local AI integration for pattern analysis
 
 ---
 
 ## License
 
-MIT License
+(To be defined)
 
 ---
 
-## Author
-
-Aniket Dixit
-BTech Data Science (2024–2028)
-
----
-
-Acadence is an experiment in environmental discipline engineering.
+Acadence is an evolving systems project focused on disciplined computing environments.
