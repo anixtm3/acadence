@@ -42,7 +42,6 @@ acadence/
 │   │   ├── init_db.py
 │   │   └── session_logger.py
 │
-├── venv/
 ├── requirements.txt
 └── install.sh
 ```
