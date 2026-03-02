@@ -3,12 +3,14 @@
 PROJECT_ROOT="$(pwd)"
 VENV_PATH="$PROJECT_ROOT/venv"
 REQ_FILE="$PROJECT_ROOT/requirements.txt"
-DB_INIT_SCRIPT="$PROJECT_ROOT/db/init_db.py"
 
- echo "======================================"
- echo "        Acadence Installer"
- echo "======================================"
- echo ""
+LINUX_DIR="$PROJECT_ROOT/linux_v1"
+DB_INIT_SCRIPT="$LINUX_DIR/db/init_db.py"
+
+echo "======================================"
+echo "        Acadence Installer"
+echo "======================================"
+echo ""
 
 # --- Check GNOME ---
 if ! command -v gnome-shell &> /dev/null
@@ -75,7 +77,7 @@ if [ -f "$DB_INIT_SCRIPT" ]; then
     echo "Initializing database..."
     python "$DB_INIT_SCRIPT"
 else
-    echo "init_db.py not found."
+    echo "init_db.py not found in linux_v1/db."
     deactivate
     exit 1
 fi
@@ -86,11 +88,11 @@ echo "Python environment ready."
 echo ""
 
 # --- Make scripts executable ---
-chmod +x modes/*.sh 2>/dev/null
-chmod +x tracking/*.py 2>/dev/null
+chmod +x "$LINUX_DIR"/modes/*.sh 2>/dev/null
+chmod +x "$LINUX_DIR"/tracking/*.py 2>/dev/null
 
- echo "Scripts made executable."
- echo ""
+echo "Scripts made executable."
+echo ""
 
 # --- Create launcher directory ---
 mkdir -p ~/.local/share/applications
@@ -103,7 +105,7 @@ create_launcher () {
 [Desktop Entry]
 Version=1.0
 Name=Acadence $NAME
-Exec=$PROJECT_ROOT/modes/$SCRIPT
+Exec=$LINUX_DIR/modes/$SCRIPT
 Type=Application
 Terminal=false
 Categories=Utility;
@@ -117,8 +119,8 @@ create_launcher "Study" "study.sh"
 create_launcher "Code" "code.sh"
 create_launcher "Exit" "exit.sh"
 
- echo "Desktop launchers created."
- echo ""
- echo "======================================"
- echo "Installation complete."
- echo "======================================"
+echo "Desktop launchers created."
+echo ""
+echo "======================================"
+echo "Installation complete."
+echo "======================================"
