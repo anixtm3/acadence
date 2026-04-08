@@ -43,7 +43,11 @@ acadence/
 │
 ├── dashboard/
 │   ├── backend/
+│   │   └── main.py
 │   └── frontend/
+│       ├── index.html
+│       ├── script.js
+│       └── style.css
 │
 ├── requirements.txt
 └── install.sh
