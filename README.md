@@ -23,24 +23,27 @@ The goal is behavioral consistency — not convenience.
 
 ## Architecture
 
-Current structure (Linux v1):
+Current structure:
 
 ```
 acadence/
 │
-├── linux_v1/
-│   ├── modes/
-│   │   ├── focus.sh
-│   │   ├── study.sh
-│   │   ├── code.sh
-│   │   └── exit.sh
-│   │
-│   ├── tracking/
-│   │   └── face_monitor.py
-│   │
-│   ├── db/
-│   │   ├── init_db.py
-│   │   └── session_logger.py
+├── modes/
+│   ├── focus.sh
+│   ├── study.sh
+│   ├── code.sh
+│   └── exit.sh
+│
+├── tracking/
+│   └── face_monitor.py
+│
+├── db/
+│   ├── init_db.py
+│   └── session_logger.py
+│
+├── dashboard/
+│   ├── backend/
+│   └── frontend/
 │
 ├── requirements.txt
 └── install.sh

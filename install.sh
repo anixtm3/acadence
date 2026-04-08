@@ -4,8 +4,8 @@ PROJECT_ROOT="$(pwd)"
 VENV_PATH="$PROJECT_ROOT/venv"
 REQ_FILE="$PROJECT_ROOT/requirements.txt"
 
-LINUX_DIR="$PROJECT_ROOT/linux_v1"
-DB_INIT_SCRIPT="$LINUX_DIR/db/init_db.py"
+ACADENCE_DIR="$PROJECT_ROOT"
+DB_INIT_SCRIPT="$ACADENCE_DIR/db/init_db.py"
 
 echo "======================================"
 echo "        Acadence Installer"
@@ -77,7 +77,7 @@ if [ -f "$DB_INIT_SCRIPT" ]; then
     echo "Initializing database..."
     python "$DB_INIT_SCRIPT"
 else
-    echo "init_db.py not found in linux_v1/db."
+    echo "init_db.py not found in ./db."
     deactivate
     exit 1
 fi
@@ -88,8 +88,8 @@ echo "Python environment ready."
 echo ""
 
 # --- Make scripts executable ---
-chmod +x "$LINUX_DIR"/modes/*.sh 2>/dev/null
-chmod +x "$LINUX_DIR"/tracking/*.py 2>/dev/null
+chmod +x "$ACADENCE_DIR"/modes/*.sh 2>/dev/null
+chmod +x "$ACADENCE_DIR"/tracking/*.py 2>/dev/null
 
 echo "Scripts made executable."
 echo ""
@@ -105,7 +105,7 @@ create_launcher () {
 [Desktop Entry]
 Version=1.0
 Name=Acadence $NAME
-Exec=$LINUX_DIR/modes/$SCRIPT
+Exec=$ACADENCE_DIR/modes/$SCRIPT
 Type=Application
 Terminal=false
 Categories=Utility;
@@ -118,6 +118,11 @@ create_launcher "Focus" "focus.sh"
 create_launcher "Study" "study.sh"
 create_launcher "Code" "code.sh"
 create_launcher "Exit" "exit.sh"
+
+# Brave profile launchers (works with profile enforcement)
+create_launcher "Brave (Focus Profile)" "open_focus_brave.sh"
+create_launcher "Brave (Study Profile)" "open_study_brave.sh"
+create_launcher "Brave (Code Profile)" "open_code_brave.sh"
 
 echo "Desktop launchers created."
 echo ""
