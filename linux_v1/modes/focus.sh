@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# ===== PATH SETUP =====
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 VENV_PATH="$PROJECT_ROOT/venv"
@@ -10,22 +9,20 @@ SESSION_FILE="/tmp/acadence_session"
 WARNING_FILE="/tmp/acadence_warnings"
 WATCHDOG_FILE="/tmp/acadence_watchdog"
 
-# ======================
-
-# ===== CLEAN PREVIOUS STATE =====
+# Clean previous state
 if [ -f "$WATCHDOG_FILE" ]; then
-    kill $(cat "$WATCHDOG_FILE") 2>/dev/null
+    PID=$(cat "$WATCHDOG_FILE")
+    if kill -0 "$PID" 2>/dev/null; then
+        kill "$PID"
+    fi
     rm -f "$WATCHDOG_FILE"
 fi
 
-pkill -f face_monitor.py 2>/dev/null
-sleep 0.2
-# =================================
+pkill -f "tracking/face_monitor.py" 2>/dev/null
 
-# Mode indicator
 echo "🔴 FOCUS MODE" > /tmp/acadence_mode
 
-# ===== START SESSION LOGGING =====
+# Start session
 SESSION_ID=$("$VENV_PATH/bin/python" - <<EOF
 import sys
 sys.path.append("$PROJECT_ROOT")
@@ -34,44 +31,34 @@ print(start_session("FOCUS"))
 EOF
 )
 
+[[ "$SESSION_ID" =~ ^[0-9]+$ ]] || SESSION_ID=0
+
 echo "$SESSION_ID" > "$SESSION_FILE"
-
-# Initialize face warning counter
 echo 0 > "$WARNING_FILE"
-# ==================================
 
-# Notification
 notify-send "Acadence" "🔴 Focus Mode Activated"
 
-# Disable GNOME notifications
 gsettings set org.gnome.desktop.notifications show-banners false
 
-# Kill distractions immediately
-pkill firefox
-pkill discord
-pkill telegram-desktop
-pkill spotify
+pkill -f firefox
+pkill -f discord
+pkill -f telegram-desktop
+pkill -f spotify
 
-# Launch allowed apps
 brave --profile-directory="Default" &
 obsidian &
 evince &
 
-# ===== START DETACHED WATCHDOG =====
 nohup bash -c '
 while true; do
-    pkill firefox
-    pkill discord
-    pkill telegram-desktop
-    pkill spotify
+    pkill -f firefox
+    pkill -f discord
+    pkill -f telegram-desktop
+    pkill -f spotify
     sleep 3
 done
 ' >/dev/null 2>&1 &
 
 echo $! > "$WATCHDOG_FILE"
-# ===================================
 
-# Start face monitor (background)
 "$VENV_PATH/bin/python" "$FACE_MONITOR" &
-
-exit 0
