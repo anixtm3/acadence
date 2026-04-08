@@ -42,26 +42,12 @@ pkill -f discord
 pkill -f telegram-desktop
 pkill -f spotify
 
-ALLOWED_BRAVE_PROFILE="Profile 1"
-
 nohup bash -c "
-ALLOWED_BRAVE_PROFILE=\"$ALLOWED_BRAVE_PROFILE\"
 while true; do
     pkill -f firefox
     pkill -f discord
     pkill -f telegram-desktop
     pkill -f spotify
-
-    # Brave (Snap) often does NOT expose --profile-directory in process argv.
-    # So we enforce profile by only allowing Brave instances launched via
-    # `modes/open_brave.sh`, which injects a recognizable flag.
-    if command -v pgrep >/dev/null 2>&1; then
-        if pgrep -af \"brave|brave-browser\" >/dev/null 2>&1; then
-            if ! pgrep -af \"brave|brave-browser\" | grep -qF -- \"--acadence-profile=\$ALLOWED_BRAVE_PROFILE\"; then
-                pkill -f \"brave|brave-browser\" 2>/dev/null
-            fi
-        fi
-    fi
 
     sleep 3
 done
