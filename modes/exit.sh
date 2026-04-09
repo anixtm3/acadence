@@ -15,7 +15,6 @@ FORCE_EXIT=0
 
 if [ "$FORCE_EXIT" -eq 0 ]; then
     USER_INPUT=$(zenity --password --title="Exit Acadence" --text="Enter exit password:")
-
     [ $? -ne 0 ] && exit 0
 
     if [ "$USER_INPUT" != "$EXIT_PASSWORD" ]; then
@@ -24,6 +23,7 @@ if [ "$FORCE_EXIT" -eq 0 ]; then
     fi
 fi
 
+# End session
 if [ -f "$SESSION_FILE" ]; then
     SESSION_ID=$(cat "$SESSION_FILE")
     [[ "$SESSION_ID" =~ ^[0-9]+$ ]] || SESSION_ID=0
@@ -31,27 +31,27 @@ if [ -f "$SESSION_FILE" ]; then
     WARNINGS=0
     [ -f "$WARNING_FILE" ] && WARNINGS=$(cat "$WARNING_FILE")
 
-    if [ -x "$VENV_PATH/bin/python" ]; then
-        "$VENV_PATH/bin/python" - <<EOF
+    "$VENV_PATH/bin/python" - <<EOF
 import sys
 sys.path.append("$PROJECT_ROOT")
 from db.session_logger import end_session
 end_session($SESSION_ID, face_warnings=$WARNINGS, forced_exit=$FORCE_EXIT)
 EOF
-    fi
 
     rm -f "$SESSION_FILE" "$WARNING_FILE"
 fi
 
+# Kill watchdog completely
 if [ -f "$WATCHDOG_FILE" ]; then
-    PID=$(cat "$WATCHDOG_FILE")
-    if kill -0 "$PID" 2>/dev/null; then
-        kill "$PID"
-    fi
+    OLD_PID=$(cat "$WATCHDOG_FILE")
+    kill -9 "$OLD_PID" 2>/dev/null
+    pkill -P "$OLD_PID" 2>/dev/null
     rm -f "$WATCHDOG_FILE"
 fi
 
+# Kill face monitor
 pkill -f "tracking/face_monitor.py" 2>/dev/null
+
 rm -f /tmp/acadence_mode
 
 gsettings set org.gnome.desktop.notifications show-banners true
