@@ -211,3 +211,17 @@ db/acadence.db
 
 # obsidian
 .obsidian
+
+# Node (Electron)
+node_modules/
+
+# Electron builds
+dist/
+build/
+
+# Runtime / system files (Acadence specific)
+*.pid
+*.tmp
+
+# Optional: ignore full DB folder if you don't need it tracked
+# db/
