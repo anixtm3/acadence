@@ -245,3 +245,7 @@ def exit_mode() -> dict[str, Any]:
         raise HTTPException(status_code=500, detail=f"Failed to run exit.sh: {e}")
 
     return {"ok": True, "prompted": True}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="127.0.0.1", port=8000)
