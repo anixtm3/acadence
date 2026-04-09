@@ -11,10 +11,9 @@ WATCHDOG_FILE="/tmp/acadence_watchdog"
 
 # Clean previous state
 if [ -f "$WATCHDOG_FILE" ]; then
-    PID=$(cat "$WATCHDOG_FILE")
-    if kill -0 "$PID" 2>/dev/null; then
-        kill "$PID"
-    fi
+    OLD_PID=$(cat "$WATCHDOG_FILE")
+    kill -9 "$OLD_PID" 2>/dev/null
+    pkill -P "$OLD_PID" 2>/dev/null
     rm -f "$WATCHDOG_FILE"
 fi
 
@@ -37,25 +36,30 @@ echo "$SESSION_ID" > "$SESSION_FILE"
 echo 0 > "$WARNING_FILE"
 
 notify-send "Acadence" "🔴 Focus Mode Activated"
-
 gsettings set org.gnome.desktop.notifications show-banners false
 
-pkill -f firefox
-pkill -f discord
-pkill -f telegram-desktop
-pkill -f spotify
+# Initial kill
+pkill -9 -f firefox
+pkill -9 -f discord
+pkill -9 -f telegram
+pkill -9 -f spotify
 
-nohup bash -c "
+# Watchdog
+nohup bash -c '
 while true; do
-    pkill -f firefox
-    pkill -f discord
-    pkill -f telegram-desktop
-    pkill -f spotify
-
+    pkill -9 -f firefox
+    pkill -9 -f discord
+    pkill -9 -f telegram
+    pkill -9 -f spotify
     sleep 3
 done
-" >/dev/null 2>&1 &
+' >/dev/null 2>&1 &
 
-echo $! > "$WATCHDOG_FILE"
+WATCHDOG_PID=$!
+echo $WATCHDOG_PID > "$WATCHDOG_FILE"
 
+sleep 0.5
+kill -0 $WATCHDOG_PID 2>/dev/null || notify-send "Acadence Error" "Watchdog failed!"
+
+# Face monitor
 "$VENV_PATH/bin/python" "$FACE_MONITOR" &
