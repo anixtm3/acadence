@@ -1,158 +1,197 @@
 # Acadence
 
-Acadence is a cross-platform productivity enforcement layer designed to run on top of existing operating systems.
+Acadence is a Linux productivity enforcement system with three main layers:
 
-It does not replace your OS.
-It controls behavioral state inside it.
+1. Shell-based mode control (focus, study, code, exit)
+2. Python services (session logging, face monitoring, FastAPI dashboard backend)
+3. Electron desktop wrapper for the dashboard UI
 
----
+It is currently implemented for GNOME-based Linux environments.
 
-## What Acadence Is
-
-Acadence is a discipline engine that enforces structured productivity modes such as:
-
-* Focus Mode
-* Study Mode
-* Code Mode
-
-It blocks distracting applications, monitors presence using computer vision, logs session data, and enforces controlled exits.
-
-The goal is behavioral consistency — not convenience.
-
----
-
-## Architecture
-
-Current structure:
+## Current Repository Structure
 
 ```
 acadence/
-│
-├── modes/
-│   ├── focus.sh
-│   ├── study.sh
-│   ├── code.sh
-│   └── exit.sh
-│
-├── tracking/
-│   └── face_monitor.py
-│
-├── db/
-│   ├── init_db.py
-│   └── session_logger.py
-│
+├── config/
+│   └── .exit_hash                # created after password setup
 ├── dashboard/
 │   ├── backend/
-│   │   └── main.py
+│   │   └── main.py               # FastAPI API + static hosting
 │   └── frontend/
-│       ├── index.html
-│       ├── script.js
-│       └── style.css
-│
-├── requirements.txt
-└── install.sh
+│       ├── index.html            # dashboard UI
+│       ├── script.js             # dashboard logic + polling
+│       └── style.css             # UI component styles
+├── db/
+│   ├── init_db.py                # creates SQLite schema
+│   └── session_logger.py         # start/end session writes
+├── electron/
+│   ├── main.js                   # launches backend + BrowserWindow
+│   └── preload.js                # currently empty
+├── modes/
+│   ├── code.sh
+│   ├── exit.sh
+│   ├── focus.sh
+│   ├── setup_password.sh
+│   ├── study.sh
+│   ├── watchdog.sh
+│   └── lib/
+│       └── common.sh             # shared mode runtime logic
+├── tracking/
+│   └── face_monitor.py           # OpenCV face absence enforcement
+├── install.sh                    # Linux installer/bootstrap
+├── package.json                  # Electron scripts
+├── requirements.txt              # Python dependencies
+├── LICENSE
+└── README.md
 ```
 
-### Core Components
+## What Acadence Does Today
 
-**Mode Engine (Bash)**
-Controls system state, blocks apps, manages watchdog process.
+### Mode Engine (Bash)
+- Focus mode starts session, blocks configured apps, starts watchdog, starts face monitor
+- Study mode starts session, blocks configured apps, starts watchdog
+- Code mode starts session, blocks configured apps, starts watchdog
+- Exit mode authenticates user via password (Zenity), ends session, restores state
 
-**Face Monitor (Python + OpenCV)**
-Detects absence and triggers forced exit.
+### Enforcement
+- Watchdog loop runs every 3 seconds and kills blocked processes using pattern matching
+- Focus mode face monitor warns on prolonged missed detections and force-exits after threshold
+- GNOME notification banners are disabled while a mode is active and restored on exit
 
-**Session Logger (SQLite)**
-Tracks:
+### Session Tracking
+- SQLite database at db/acadence.db
+- Table: sessions
+- Stored fields:
+	- mode
+	- start_time
+	- end_time
+	- duration_seconds
+	- face_warnings
+	- forced_exit
 
-* Mode
-* Start time
-* End time
-* Duration
-* Face warnings
-* Forced exit flag
+### Dashboard
+- FastAPI backend serves both API and frontend
+- Frontend polls status and session history every 2 seconds
+- Controls exposed in UI:
+	- Start Focus / Study / Code
+	- Exit active mode
+	- Refresh history
 
-**Watchdog System**
-Detached PID-based background process that continuously blocks restricted applications.
+### Electron App
+- Electron starts Python backend (dashboard/backend/main.py)
+- Then opens BrowserWindow at http://127.0.0.1:8000
 
----
+## Runtime Flow
 
-## How Modes Work
+### Starting a mode
+1. Source shared logic from modes/lib/common.sh
+2. Validate Python venv path exists (venv/bin/python)
+3. Stop leftover face monitor/watchdog from previous run
+4. Create DB session row and write tmp state files
+5. Disable GNOME notification banners
+6. Kill distractions immediately
+7. Start watchdog loop
+8. Start face monitor only in focus mode
 
-When a mode starts:
+### Exiting a mode
+1. Optional password check against config/.exit_hash
+2. Stop face monitor
+3. Stop watchdog
+4. Finalize DB session with warnings/forced_exit
+5. Clean tmp state files
+6. Re-enable GNOME notification banners
 
-1. Previous watchdog is killed.
-2. Distraction apps are terminated.
-3. GNOME notifications are disabled.
-4. Allowed apps are launched.
-5. A detached watchdog loop begins.
-6. (Focus Mode only) Face monitor activates.
+## Temporary Runtime Files
 
-If no face is detected for 30 seconds:
+Acadence uses these files in /tmp:
 
-* `exit.sh --force` is triggered.
-* Session is logged with `forced_exit = 1`.
-* Watchdog is terminated.
-* System state is restored.
+- /tmp/acadence_mode
+- /tmp/acadence_session
+- /tmp/acadence_warnings
+- /tmp/acadence_watchdog
+- /tmp/acadence_watchdog_heartbeat
+- /tmp/acadence_face_monitor
 
-Manual exit requires password authentication.
+## API Endpoints
 
----
+Provided by dashboard/backend/main.py:
 
-## Installation (Linux - GNOME Required)
+- GET /
+	- serves frontend index.html if present
+- GET /status
+	- current mode/session state
+- GET /sessions?limit=25
+	- recent session history
+- POST /mode/{focus|study|code}
+	- starts the selected mode
+- POST /exit
+	- launches exit.sh (Zenity password flow)
 
-From project root:
+## Installation
 
-```
+From repository root:
+
+```bash
 bash install.sh
 ```
 
-Installer will:
+Installer currently performs:
 
-* Verify GNOME
-* Check required system tools
-* Create Python virtual environment
-* Install dependencies
-* Initialize SQLite database
-* Create desktop launchers
+- GNOME check
+- Python3 check
+- notify-send install/check
+- virtual environment creation
+- Python package install from requirements.txt
+- DB initialization
+- script executable permissions
+- desktop launcher creation for Focus/Study/Code/Exit
 
----
+## Running the Project
 
-## Requirements
+### Option A: Electron desktop app
+```bash
+npm install
+npm start
+```
 
-* Ubuntu / GNOME-based environment
-* Python 3
-* Brave browser
-* OpenCV (installed via requirements.txt)
-* notify-send
+### Option B: Backend directly (browser)
+```bash
+source venv/bin/activate
+python dashboard/backend/main.py
+```
+Then open http://127.0.0.1:8000
 
----
+### Password setup (required for manual exit auth)
+```bash
+bash modes/setup_password.sh
+```
 
-## Design Philosophy
+## Dependencies
 
-Acadence is not a productivity assistant.
+### System-level
+- Linux with GNOME
+- gsettings
+- notify-send
+- zenity
+- pkill
+- Python 3
 
-It is a behavioral enforcement layer.
+### Python
+- numpy==2.4.2
+- opencv-python==4.13.0.92
+- fastapi
+- uvicorn[standard]
 
-It reduces system freedom during structured work sessions to eliminate distraction paths.
+### Node/Electron
+- electron ^41.2.0
 
-Discipline is enforced at the environment level.
+## Known Scope and Limitations
 
----
-
-## Roadmap
-
-* Refactor into Core + OS Adapter architecture
-* Windows adapter implementation
-* Behavioral analytics engine
-* Adaptive enforcement model
-* Local AI integration for pattern analysis
-
----
+- Linux GNOME focused implementation (not cross-platform yet in code)
+- Blocked app list is currently hardcoded in modes/lib/common.sh
+- electron/preload.js is present but currently unused
+- Face monitor exits silently if camera/cascade initialization fails
 
 ## License
 
-(To be defined)
-
----
-
-Acadence is an evolving systems project focused on disciplined computing environments.
+This repository includes GNU GPL v3 license text in LICENSE.
