@@ -1,0 +1,25 @@
+{
+  "name": "acadence",
+  "version": "1.0.0",
+  "description": "Acadence is a cross-platform productivity enforcement layer designed to run on top of existing operating systems.",
+  "main": "electron/main.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "electron . --ozone-platform=x11",
+    "dev": "electron . --ozone-platform=x11 --disable-gpu"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anixtm3/acadence.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anixtm3/acadence/issues"
+  },
+  "homepage": "https://github.com/anixtm3/acadence#readme",
+  "devDependencies": {
+    "electron": "^41.2.0"
+  }
+}
