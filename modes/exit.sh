@@ -11,7 +11,7 @@ FORCE_EXIT=0
 if [ "$FORCE_EXIT" -eq 0 ]; then
     if [ ! -f "$HASH_FILE" ]; then
         zenity --error --title="Acadence" \
-            --text="Exit password not configured.\nRun scripts/setup_password.sh first."
+            --text="Exit password not configured.\nRun: bash modes/setup_password.sh"
         exit 1
     fi
 
@@ -34,6 +34,9 @@ acadence_stop_face_monitor
 
 # 2. Kill watchdog — stops enforcement loop
 acadence_stop_watchdog
+
+# 2.5 Restore PATH for any child processes started during this exit flow
+acadence_disable_path_blockers
 
 # 3. Log session end — /tmp files still exist here so we can read them
 if [ -f "$SESSION_FILE" ]; then
