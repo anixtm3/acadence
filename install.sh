@@ -39,6 +39,16 @@ else
     echo "notify-send detected."
 fi
 
+# --- Check zenity ---
+if ! command -v zenity &> /dev/null
+then
+    echo "Installing zenity..."
+    sudo apt update
+    sudo apt install -y zenity
+else
+    echo "zenity detected."
+fi
+
 # --- Check Python ---
 if ! command -v python3 &> /dev/null
 then
@@ -121,6 +131,21 @@ create_launcher "Exit" "exit.sh"
 
 echo "Desktop launchers created."
 echo ""
+
+# --- Node.js / npm + Electron dependencies ---
+if ! command -v npm &> /dev/null
+then
+    echo "npm not found. Install Node.js to use the Electron dashboard."
+else
+    echo "npm detected. Installing Electron dependencies..."
+    npm install
+    echo "Node dependencies installed."
+fi
+
+echo ""
 echo "======================================"
 echo "Installation complete."
+echo ""
+echo "Next step: set your exit password:"
+echo "  bash modes/setup_password.sh"
 echo "======================================"
