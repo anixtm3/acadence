@@ -119,11 +119,6 @@ create_launcher "Study" "study.sh"
 create_launcher "Code" "code.sh"
 create_launcher "Exit" "exit.sh"
 
-# Brave profile launchers (works with profile enforcement)
-create_launcher "Brave (Focus Profile)" "open_focus_brave.sh"
-create_launcher "Brave (Study Profile)" "open_study_brave.sh"
-create_launcher "Brave (Code Profile)" "open_code_brave.sh"
-
 echo "Desktop launchers created."
 echo ""
 echo "======================================"
