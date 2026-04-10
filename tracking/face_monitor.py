@@ -16,10 +16,18 @@ face_cascade = cv2.CascadeClassifier(
 )
 
 if face_cascade.empty():
+    subprocess.run(
+        ["notify-send", "-u", "critical", "Acadence Error", "Face cascade failed to load — face monitor inactive"],
+        check=False
+    )
     exit()
 
 cap = cv2.VideoCapture(0)
 if not cap.isOpened():
+    subprocess.run(
+        ["notify-send", "-u", "critical", "Acadence Error", "Camera not accessible — face monitor inactive"],
+        check=False
+    )
     exit()
 
 last_seen = time.time()
