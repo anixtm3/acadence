@@ -1,29 +1,41 @@
 #!/bin/bash
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-VENV_PATH="$PROJECT_ROOT/venv"
-
-SESSION_FILE="/tmp/acadence_session"
-WARNING_FILE="/tmp/acadence_warnings"
-WATCHDOG_FILE="/tmp/acadence_watchdog"
-
-EXIT_PASSWORD="hakunamatata"
+HASH_FILE="$ACADENCE_ROOT/config/.exit_hash"
 
 FORCE_EXIT=0
 [ "$1" == "--force" ] && FORCE_EXIT=1
 
+# ── Authentication ────────────────────────────────────────────────────────────
+
 if [ "$FORCE_EXIT" -eq 0 ]; then
+    if [ ! -f "$HASH_FILE" ]; then
+        zenity --error --title="Acadence" \
+            --text="Exit password not configured.\nRun scripts/setup_password.sh first."
+        exit 1
+    fi
+
     USER_INPUT=$(zenity --password --title="Exit Acadence" --text="Enter exit password:")
     [ $? -ne 0 ] && exit 0
 
-    if [ "$USER_INPUT" != "$EXIT_PASSWORD" ]; then
+    STORED_HASH=$(cat "$HASH_FILE")
+    INPUT_HASH=$(echo -n "$USER_INPUT" | sha256sum | cut -d' ' -f1)
+
+    if [ "$INPUT_HASH" != "$STORED_HASH" ]; then
         zenity --error --title="Access Denied" --text="Incorrect password."
         exit 1
     fi
 fi
 
-# End session
+# ── Teardown order (race-condition safe) ──────────────────────────────────────
+
+# 1. Kill face_monitor FIRST — prevents it from triggering a second exit
+acadence_stop_face_monitor
+
+# 2. Kill watchdog — stops enforcement loop
+acadence_stop_watchdog
+
+# 3. Log session end — /tmp files still exist here so we can read them
 if [ -f "$SESSION_FILE" ]; then
     SESSION_ID=$(cat "$SESSION_FILE")
     [[ "$SESSION_ID" =~ ^[0-9]+$ ]] || SESSION_ID=0
@@ -31,33 +43,28 @@ if [ -f "$SESSION_FILE" ]; then
     WARNINGS=0
     [ -f "$WARNING_FILE" ] && WARNINGS=$(cat "$WARNING_FILE")
 
-    "$VENV_PATH/bin/python" - <<EOF
+    "$VENV_PYTHON" - <<EOF
 import sys
-sys.path.append("$PROJECT_ROOT")
+sys.path.append("$ACADENCE_ROOT")
 from db.session_logger import end_session
 end_session($SESSION_ID, face_warnings=$WARNINGS, forced_exit=$FORCE_EXIT)
 EOF
 
-    rm -f "$SESSION_FILE" "$WARNING_FILE"
+    if [ $? -ne 0 ]; then
+        notify-send -u critical "Acadence Error" "Session logging failed — check DB"
+    fi
 fi
 
-# Kill watchdog completely
-if [ -f "$WATCHDOG_FILE" ]; then
-    OLD_PID=$(cat "$WATCHDOG_FILE")
-    kill -9 "$OLD_PID" 2>/dev/null
-    pkill -P "$OLD_PID" 2>/dev/null
-    rm -f "$WATCHDOG_FILE"
-fi
+# 4. Clean all state files — last step before UI
+acadence_cleanup_state
 
-# Kill face monitor
-pkill -f "tracking/face_monitor.py" 2>/dev/null
-
-rm -f /tmp/acadence_mode
-
+# 5. Restore notifications
 gsettings set org.gnome.desktop.notifications show-banners true
 
+# ── Exit feedback ─────────────────────────────────────────────────────────────
+
 if [ "$FORCE_EXIT" -eq 0 ]; then
-    zenity --info --title="Acadence" --text="Exited successfully."
+    zenity --info --title="Acadence" --text="Session ended. Good work."
 else
-    notify-send -u critical "Acadence" "Session terminated due to inactivity."
+    notify-send -u critical "Acadence" "Session terminated: face not detected."
 fi
