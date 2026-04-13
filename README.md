@@ -134,7 +134,7 @@ venv/bin/python dashboard/backend/main.py
 |------|-------------|--------------|
 | Focus | Yes | Brave, Obsidian, Evince, VSCode/Cursor |
 | Study | No | Brave, Obsidian, Evince, VSCode/Cursor |
-| Code | No | Brave, GNOME Terminal, VSCode, VSCode Insiders, Cursor |
+| Code | No | Brave, Obsidian, GNOME Terminal, VSCode/Cursor |
 
 All modes block everything not in the allowlist. The watchdog loop kills disallowed processes continuously while a mode is active.
 
