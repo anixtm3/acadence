@@ -53,7 +53,7 @@ acadence/
 
 ## Installation
 
-```bash
+```
 git clone https://github.com/anixtm3/acadence.git
 cd acadence
 bash install.sh
@@ -70,7 +70,7 @@ bash install.sh
 
 Then set your exit password (required before you can exit any mode):
 
-```bash
+```
 bash modes/setup_password.sh
 ```
 
@@ -78,7 +78,7 @@ This stores a SHA256 hash of your password in `config/.exit_hash`. The plaintext
 
 To install Node dependencies for the Electron dashboard:
 
-```bash
+```
 npm install
 ```
 
@@ -88,7 +88,7 @@ npm install
 
 **From the terminal:**
 
-```bash
+```
 bash modes/focus.sh
 bash modes/study.sh
 bash modes/code.sh
@@ -100,7 +100,7 @@ bash modes/code.sh
 
 ### Exiting a mode
 
-```bash
+```
 bash modes/exit.sh
 ```
 
@@ -110,13 +110,13 @@ Alternatively, use the "Exit current mode" button in the dashboard — it trigge
 
 ### Running the Electron dashboard
 
-```bash
+```
 npm start
 ```
 
 Or in headless/debug mode:
 
-```bash
+```
 npm run dev
 ```
 
@@ -124,7 +124,7 @@ This spawns the FastAPI backend and opens a `BrowserWindow` at `http://127.0.0.1
 
 The dashboard can also be accessed directly in a browser at `http://127.0.0.1:8000` if you start the backend manually:
 
-```bash
+```
 venv/bin/python dashboard/backend/main.py
 ```
 
@@ -214,7 +214,7 @@ Static files (JS, CSS) are served from `dashboard/frontend/` at `/static/`.
 
 ### `GET /status` response shape
 
-```json
+```
 {
   "mode": "FOCUS",
   "session_id": 12,
